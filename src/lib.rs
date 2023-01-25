@@ -1,14 +1,15 @@
+use std::collections::BTreeSet;
 use std::rc::Rc;
 
 pub struct Dag<T> {
-    roots: Vec<Link<T>>,
+    roots: BTreeSet<Link<T>>,
 }
 
 type Link<T> = Option<Rc<Node<T>>>;
 
 struct Node<T> {
     elem: T,
-    children: Vec<Link<T>>,
+    children: BTreeSet<Link<T>>,
 }
 
 #[cfg(test)]
