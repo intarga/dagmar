@@ -12,6 +12,14 @@ struct Node<T> {
     children: BTreeSet<Link<T>>,
 }
 
+impl<T> Dag<T> {
+    pub fn new() -> Self {
+        Dag {
+            roots: BTreeSet::new(),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
