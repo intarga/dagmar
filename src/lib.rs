@@ -28,6 +28,12 @@ impl<T: Ord> Dag<T> {
     }
 }
 
+impl<T: Ord> Default for Dag<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
