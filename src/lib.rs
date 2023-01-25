@@ -2,14 +2,12 @@ use std::collections::BTreeSet;
 use std::rc::Rc;
 
 pub struct Dag<T> {
-    roots: BTreeSet<Link<T>>,
+    roots: BTreeSet<Rc<Node<T>>>,
 }
-
-type Link<T> = Option<Rc<Node<T>>>;
 
 struct Node<T> {
     elem: T,
-    children: BTreeSet<Link<T>>,
+    children: BTreeSet<Rc<Node<T>>>,
 }
 
 impl<T> Dag<T> {
