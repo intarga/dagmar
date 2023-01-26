@@ -22,6 +22,10 @@ impl<T: Ord> Link<T> {
             children: BTreeSet::new(),
         }))
     }
+
+    fn add_child(&self, child: Rc<Link<T>>) {
+        self.0.borrow_mut().children.insert(child.clone());
+    }
 }
 
 impl<T: Ord> Dag<T> {
@@ -35,6 +39,10 @@ impl<T: Ord> Dag<T> {
         let link = Rc::new(Link::new(elem));
         self.roots.insert(link.clone());
         link
+    }
+
+    pub fn add_edge(&mut self, parent: Rc<Link<T>>, child: Rc<Link<T>>) {
+        parent.as_ref().add_child(child);
     }
 }
 
