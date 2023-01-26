@@ -5,13 +5,23 @@ use std::rc::Rc;
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
 pub struct Node<T: Ord> {
     elem: T,
-    children: BTreeSet<Link<T>>,
+    children: BTreeSet<Rc<Link<T>>>,
 }
 
-type Link<T> = Rc<RefCell<Node<T>>>;
+#[derive(PartialEq, Eq, PartialOrd, Ord)]
+pub struct Link<T: Ord>(RefCell<Node<T>>);
 
 pub struct Dag<T: Ord> {
-    roots: BTreeSet<Link<T>>,
+    roots: BTreeSet<Rc<Link<T>>>,
+}
+
+impl<T: Ord> Link<T> {
+    fn new(elem: T) -> Self {
+        Link(RefCell::new(Node {
+            elem,
+            children: BTreeSet::new(),
+        }))
+    }
 }
 
 impl<T: Ord> Dag<T> {
@@ -21,11 +31,8 @@ impl<T: Ord> Dag<T> {
         }
     }
 
-    pub fn add_node(&mut self, elem: T) -> Link<T> {
-        let link = Rc::new(RefCell::new(Node {
-            elem,
-            children: BTreeSet::new(),
-        }));
+    pub fn add_node(&mut self, elem: T) -> Rc<Link<T>> {
+        let link = Rc::new(Link::new(elem));
         self.roots.insert(link.clone());
         link
     }
