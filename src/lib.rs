@@ -1,14 +1,17 @@
+use std::cell::RefCell;
 use std::collections::BTreeSet;
 use std::rc::Rc;
-
-pub struct Dag<T: Ord> {
-    roots: BTreeSet<Rc<Node<T>>>,
-}
 
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
 pub struct Node<T: Ord> {
     elem: T,
-    children: BTreeSet<Rc<Node<T>>>,
+    children: BTreeSet<Link<T>>,
+}
+
+type Link<T> = Rc<RefCell<Node<T>>>;
+
+pub struct Dag<T: Ord> {
+    roots: BTreeSet<Link<T>>,
 }
 
 impl<T: Ord> Dag<T> {
@@ -18,13 +21,13 @@ impl<T: Ord> Dag<T> {
         }
     }
 
-    pub fn add_node(&mut self, elem: T) -> Rc<Node<T>> {
-        let node = Rc::new(Node {
+    pub fn add_node(&mut self, elem: T) -> Link<T> {
+        let link = Rc::new(RefCell::new(Node {
             elem,
             children: BTreeSet::new(),
-        });
-        self.roots.insert(node.clone());
-        node
+        }));
+        self.roots.insert(link.clone());
+        link
     }
 }
 
