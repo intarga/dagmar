@@ -24,7 +24,7 @@ impl<T: Ord> Link<T> {
     }
 
     fn add_child(&self, child: Rc<Link<T>>) {
-        self.0.borrow_mut().children.insert(child.clone());
+        self.0.borrow_mut().children.insert(child);
     }
 
     fn remove_child(&self, child: Rc<Link<T>>) {
