@@ -42,7 +42,9 @@ impl<T: Ord> Dag<T> {
     }
 
     pub fn add_edge(&mut self, parent: Rc<Link<T>>, child: Rc<Link<T>>) {
-        parent.as_ref().add_child(child);
+        parent.as_ref().add_child(child.clone());
+
+        self.roots.remove(&child);
     }
 }
 
