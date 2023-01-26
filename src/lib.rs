@@ -26,6 +26,10 @@ impl<T: Ord> Link<T> {
     fn add_child(&self, child: Rc<Link<T>>) {
         self.0.borrow_mut().children.insert(child.clone());
     }
+
+    fn remove_child(&self, child: Rc<Link<T>>) {
+        self.0.borrow_mut().children.remove(&child);
+    }
 }
 
 impl<T: Ord> Dag<T> {
@@ -45,6 +49,12 @@ impl<T: Ord> Dag<T> {
         parent.as_ref().add_child(child.clone());
 
         self.roots.remove(&child);
+    }
+
+    // NOTE: this doesn't add to roots when a node no longer has parents,
+    // only for use in transitive reduce.
+    fn remove_edge(&mut self, parent: Rc<Link<T>>, child: Rc<Link<T>>) {
+        parent.as_ref().remove_child(child);
     }
 }
 
