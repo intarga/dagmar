@@ -53,8 +53,30 @@ impl<T: Ord> Dag<T> {
 
     // NOTE: this doesn't add to roots when a node no longer has parents,
     // only for use in transitive reduce.
-    fn remove_edge(&mut self, parent: Rc<Link<T>>, child: Rc<Link<T>>) {
+    fn remove_edge(parent: Rc<Link<T>>, child: Rc<Link<T>>) {
         parent.as_ref().remove_child(child);
+    }
+
+    fn recursive_parent_remove(parent: Rc<Link<T>>, child: Rc<Link<T>>) {
+        Self::remove_edge(parent.clone(), child.clone());
+        for granchild in child.0.borrow().children.iter() {
+            Self::recursive_parent_remove(parent.clone(), granchild.clone());
+        }
+    }
+
+    fn transitive_reduce_iter(curr_node: Rc<Link<T>>) {
+        for child in curr_node.0.borrow().children.iter() {
+            for granchild in child.0.borrow().children.iter() {
+                Self::recursive_parent_remove(curr_node.clone(), granchild.clone());
+            }
+        }
+    }
+
+    // TODO: see if we can reduce the amount of rc cloning happening
+    pub fn transitive_reduce(&self) {
+        for root in self.roots.iter() {
+            Self::transitive_reduce_iter(root.clone())
+        }
     }
 }
 
