@@ -115,9 +115,32 @@ impl<T: Ord> Default for Dag<T> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
+    fn test_transitive_reduce() {
+        let mut dag: Dag<u32> = Dag::new();
+
+        let node1 = dag.add_node(1);
+        let node2 = dag.add_node(2);
+        let node3 = dag.add_node(3);
+        let node4 = dag.add_node(4);
+        let node5 = dag.add_node(5);
+
+        dag.add_edge(node1.clone(), node2.clone());
+        dag.add_edge(node1.clone(), node3.clone());
+        dag.add_edge(node1.clone(), node4.clone());
+        dag.add_edge(node1.clone(), node5.clone());
+
+        dag.add_edge(node2.clone(), node4.clone());
+        dag.add_edge(node3.clone(), node4.clone());
+        dag.add_edge(node3.clone(), node5.clone());
+        dag.add_edge(node4.clone(), node5.clone());
+
+        assert_eq!(dag.count_edges(), 8);
+
+        dag.transitive_reduce();
+
+        assert_eq!(dag.count_edges(), 5);
     }
 }
