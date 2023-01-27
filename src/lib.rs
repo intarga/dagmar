@@ -57,6 +57,33 @@ impl<T: Ord> Dag<T> {
         parent.as_ref().remove_child(child);
     }
 
+    fn count_edges_iter(curr_node: Rc<Link<T>>, nodes_visited: &mut BTreeSet<Rc<Link<T>>>) -> u32 {
+        let mut edge_count = 0;
+
+        for child in curr_node.0.borrow().children.iter() {
+            edge_count += 1;
+
+            if !nodes_visited.contains(child) {
+                edge_count += Self::count_edges_iter(child.clone(), nodes_visited);
+            }
+        }
+
+        nodes_visited.insert(curr_node);
+
+        edge_count
+    }
+
+    pub fn count_edges(&self) -> u32 {
+        let mut edge_count = 0;
+        let mut nodes_visited: BTreeSet<Rc<Link<T>>> = BTreeSet::new();
+
+        for root in self.roots.iter() {
+            edge_count += Self::count_edges_iter(root.clone(), &mut nodes_visited);
+        }
+
+        edge_count
+    }
+
     fn recursive_parent_remove(parent: Rc<Link<T>>, child: Rc<Link<T>>) {
         Self::remove_edge(parent.clone(), child.clone());
         for granchild in child.0.borrow().children.iter() {
