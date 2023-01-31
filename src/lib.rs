@@ -112,8 +112,34 @@ impl<T: Ord> Dag<T> {
         }
     }
 
+    fn cycle_check_iter(curr_node: Rc<Link<T>>, ancestors: &mut Vec<Rc<Link<T>>>) -> bool {
+        if ancestors.contains(&curr_node) {
+            return true;
+        }
+
+        ancestors.push(curr_node.clone());
+
+        for child in curr_node.0.borrow().children.iter() {
+            if Self::cycle_check_iter(child.clone(), ancestors) {
+                return true;
+            }
+        }
+
+        ancestors.pop();
+
+        false
+    }
+
     pub fn cycle_check(&self) -> bool {
-        todo!()
+        let mut ancestors: Vec<Rc<Link<T>>> = Vec::new();
+
+        for root in self.roots.iter() {
+            if Self::cycle_check_iter(root.clone(), &mut ancestors) {
+                return true;
+            }
+        }
+
+        false
     }
 }
 
