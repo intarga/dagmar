@@ -111,6 +111,10 @@ impl<T: Ord> Dag<T> {
             Self::transitive_reduce_iter(root.clone())
         }
     }
+
+    pub fn cycle_check(&self) -> bool {
+        todo!()
+    }
 }
 
 impl<T: Ord> Default for Dag<T> {
@@ -148,5 +152,37 @@ mod tests {
         dag.transitive_reduce();
 
         assert_eq!(dag.count_edges(), 5);
+    }
+
+    #[test]
+    fn test_cycle_check() {
+        let mut good_dag: Dag<u32> = Dag::new();
+
+        let node1 = good_dag.add_node(1);
+        let node2 = good_dag.add_node(2);
+        let node3 = good_dag.add_node(3);
+        let node4 = good_dag.add_node(4);
+
+        good_dag.add_edge(node1.clone(), node2.clone());
+        good_dag.add_edge(node1.clone(), node3.clone());
+        good_dag.add_edge(node2.clone(), node4.clone());
+        good_dag.add_edge(node3.clone(), node4.clone());
+
+        assert!(!good_dag.cycle_check());
+
+        let mut bad_dag: Dag<u32> = Dag::new();
+
+        let node1 = bad_dag.add_node(1);
+        let node2 = bad_dag.add_node(2);
+        let node3 = bad_dag.add_node(3);
+        let node4 = bad_dag.add_node(4);
+
+        bad_dag.add_edge(node1.clone(), node2.clone());
+        bad_dag.add_edge(node1.clone(), node3.clone());
+        bad_dag.add_edge(node2.clone(), node4.clone());
+        bad_dag.add_edge(node4.clone(), node3.clone());
+        bad_dag.add_edge(node3.clone(), node2.clone());
+
+        assert!(bad_dag.cycle_check());
     }
 }
