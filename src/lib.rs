@@ -92,7 +92,9 @@ impl<T: Ord> Dag<T> {
     }
 
     fn transitive_reduce_iter(curr_node: Rc<Link<T>>) {
-        for child in curr_node.0.borrow().children.iter() {
+        let children = curr_node.0.borrow().children.clone(); // FIXME: would be nice to not have to clone here
+
+        for child in children.iter() {
             for granchild in child.0.borrow().children.iter() {
                 Self::recursive_parent_remove(curr_node.clone(), granchild.clone());
             }
