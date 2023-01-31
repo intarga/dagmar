@@ -99,6 +99,10 @@ impl<T: Ord> Dag<T> {
                 Self::recursive_parent_remove(curr_node.clone(), granchild.clone());
             }
         }
+
+        for child in children.iter() {
+            Self::transitive_reduce_iter(child.clone());
+        }
     }
 
     // TODO: see if we can reduce the amount of rc cloning happening
