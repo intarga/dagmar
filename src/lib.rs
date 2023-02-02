@@ -51,6 +51,14 @@ impl<T: Ord> Dag<T> {
         self.roots.remove(&child);
     }
 
+    pub fn add_node_with_children(&mut self, elem: T, children: Vec<Rc<Link<T>>>) {
+        let new_node = self.add_node(elem);
+
+        for child in children.into_iter() {
+            self.add_edge(new_node.clone(), child)
+        }
+    }
+
     // NOTE: this doesn't add to roots when a node no longer has parents,
     // only for use in transitive reduce.
     fn remove_edge(parent: Rc<Link<T>>, child: Rc<Link<T>>) {
