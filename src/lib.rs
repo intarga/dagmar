@@ -182,11 +182,18 @@ mod tests {
         dag.add_edge(node4.clone(), node5.clone());
 
         assert_eq!(dag.count_edges(), 8);
+        assert!(node1.0.borrow().children.contains(&node4));
+        assert!(node1.0.borrow().children.contains(&node5));
+        assert!(node3.0.borrow().children.contains(&node5));
 
         dag.transitive_reduce();
 
         assert_eq!(dag.count_edges(), 5);
+        assert!(!node1.0.borrow().children.contains(&node4));
+        assert!(!node1.0.borrow().children.contains(&node5));
+        assert!(!node3.0.borrow().children.contains(&node5));
     }
+    
 
     #[test]
     fn test_cycle_check() {
