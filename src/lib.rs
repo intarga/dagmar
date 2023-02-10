@@ -192,7 +192,7 @@ mod tests {
         assert!(!node1.0.borrow().children.contains(&node4));
         assert!(!node1.0.borrow().children.contains(&node5));
         assert!(!node3.0.borrow().children.contains(&node5));
-    }    
+    }
 
     #[test]
     fn test_cycle_check() {
