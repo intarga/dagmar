@@ -1,5 +1,6 @@
 use std::collections::BTreeSet;
 
+#[derive(Debug)]
 pub struct Node<T> {
     pub elem: T,
     pub children: BTreeSet<NodeId>,
@@ -7,6 +8,7 @@ pub struct Node<T> {
 
 type NodeId = usize;
 
+#[derive(Debug)]
 pub struct Dag<T: Ord> {
     pub roots: BTreeSet<NodeId>,
     pub nodes: Vec<Node<T>>,
