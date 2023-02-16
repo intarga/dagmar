@@ -4,6 +4,7 @@ use std::collections::BTreeSet;
 pub struct Node<T> {
     pub elem: T,
     pub children: BTreeSet<NodeId>,
+    pub parents: BTreeSet<NodeId>,
 }
 
 type NodeId = usize;
@@ -19,6 +20,7 @@ impl<T: Ord> Node<T> {
         Node {
             elem,
             children: BTreeSet::new(),
+            parents: BTreeSet::new(),
         }
     }
 }
@@ -43,6 +45,7 @@ impl<T: Ord> Dag<T> {
     pub fn add_edge(&mut self, parent: NodeId, child: NodeId) {
         // TODO: we can do better than unwrapping here
         self.nodes.get_mut(parent).unwrap().children.insert(child);
+        self.nodes.get_mut(child).unwrap().parents.insert(parent);
 
         self.roots.remove(&child);
     }
@@ -62,6 +65,7 @@ impl<T: Ord> Dag<T> {
     fn remove_edge(&mut self, parent: NodeId, child: NodeId) {
         // TODO: we can do better than unwrapping here
         self.nodes.get_mut(parent).unwrap().children.remove(&child);
+        self.nodes.get_mut(child).unwrap().parents.remove(&parent);
     }
 
     fn count_edges_iter(&self, curr_node: NodeId, nodes_visited: &mut BTreeSet<NodeId>) -> u32 {
