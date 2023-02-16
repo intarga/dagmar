@@ -1,4 +1,5 @@
-use std::collections::BTreeSet;
+use std::collections::{BTreeSet, HashMap};
+use std::hash::Hash;
 
 #[derive(Debug)]
 pub struct Node<T> {
@@ -10,12 +11,13 @@ pub struct Node<T> {
 pub type NodeId = usize;
 
 #[derive(Debug)]
-pub struct Dag<T: Ord> {
+pub struct Dag<T: Ord + Hash + Clone> {
     pub roots: BTreeSet<NodeId>,
     pub nodes: Vec<Node<T>>,
+    pub index_lookup: HashMap<T, NodeId>,
 }
 
-impl<T: Ord> Node<T> {
+impl<T: Ord + Hash + Clone> Node<T> {
     pub fn new(elem: T) -> Self {
         Node {
             elem,
@@ -25,19 +27,22 @@ impl<T: Ord> Node<T> {
     }
 }
 
-impl<T: Ord> Dag<T> {
+impl<T: Ord + Hash + Clone> Dag<T> {
     pub fn new() -> Self {
         Dag {
             roots: BTreeSet::new(),
             nodes: Vec::new(),
+            index_lookup: HashMap::new(),
         }
     }
 
     pub fn add_node(&mut self, elem: T) -> NodeId {
         let index = self.nodes.len();
-        self.nodes.push(Node::new(elem));
+        self.nodes.push(Node::new(elem.clone()));
 
         self.roots.insert(index);
+
+        self.index_lookup.insert(elem, index);
 
         index
     }
@@ -154,7 +159,7 @@ impl<T: Ord> Dag<T> {
     }
 }
 
-impl<T: Ord> Default for Dag<T> {
+impl<T: Ord + Hash + Clone> Default for Dag<T> {
     fn default() -> Self {
         Self::new()
     }
