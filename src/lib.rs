@@ -7,7 +7,7 @@ pub struct Node<T> {
     pub parents: BTreeSet<NodeId>,
 }
 
-type NodeId = usize;
+pub type NodeId = usize;
 
 #[derive(Debug)]
 pub struct Dag<T: Ord> {
