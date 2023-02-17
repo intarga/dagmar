@@ -94,7 +94,7 @@ impl<T: Ord + Hash + Clone> Dag<T> {
         let mut nodes_visited: BTreeSet<NodeId> = BTreeSet::new();
 
         for root in self.roots.iter() {
-            edge_count += self.count_edges_iter(root.clone(), &mut nodes_visited);
+            edge_count += self.count_edges_iter(*root, &mut nodes_visited);
         }
 
         edge_count
@@ -124,7 +124,7 @@ impl<T: Ord + Hash + Clone> Dag<T> {
     // TODO: see if we can reduce the amount of rc cloning happening
     pub fn transitive_reduce(&mut self) {
         for root in self.roots.clone().iter() {
-            self.transitive_reduce_iter(root.clone())
+            self.transitive_reduce_iter(*root)
         }
     }
 
@@ -133,7 +133,7 @@ impl<T: Ord + Hash + Clone> Dag<T> {
             return true;
         }
 
-        ancestors.push(curr_node.clone());
+        ancestors.push(curr_node);
 
         for child in self.nodes.get(curr_node).unwrap().children.iter() {
             if self.cycle_check_iter(*child, ancestors) {
