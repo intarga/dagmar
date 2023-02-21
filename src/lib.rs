@@ -13,6 +13,7 @@ pub type NodeId = usize;
 #[derive(Debug)]
 pub struct Dag<T: Ord + Hash + Clone> {
     pub roots: BTreeSet<NodeId>,
+    pub leaves: BTreeSet<NodeId>,
     pub nodes: Vec<Node<T>>,
     pub index_lookup: HashMap<T, NodeId>,
 }
@@ -31,6 +32,7 @@ impl<T: Ord + Hash + Clone> Dag<T> {
     pub fn new() -> Self {
         Dag {
             roots: BTreeSet::new(),
+            leaves: BTreeSet::new(),
             nodes: Vec::new(),
             index_lookup: HashMap::new(),
         }
@@ -41,6 +43,7 @@ impl<T: Ord + Hash + Clone> Dag<T> {
         self.nodes.push(Node::new(elem.clone()));
 
         self.roots.insert(index);
+        self.leaves.insert(index);
 
         self.index_lookup.insert(elem, index);
 
@@ -53,6 +56,7 @@ impl<T: Ord + Hash + Clone> Dag<T> {
         self.nodes.get_mut(child).unwrap().parents.insert(parent);
 
         self.roots.remove(&child);
+        self.leaves.remove(&parent);
     }
 
     pub fn add_node_with_children(&mut self, elem: T, children: Vec<NodeId>) -> NodeId {
