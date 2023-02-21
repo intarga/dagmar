@@ -69,12 +69,17 @@ impl<T: Ord + Hash + Clone> Dag<T> {
         new_node
     }
 
-    // NOTE: this doesn't add to roots when a node no longer has parents,
-    // only for use in transitive reduce.
     fn remove_edge(&mut self, parent: NodeId, child: NodeId) {
         // TODO: we can do better than unwrapping here
         self.nodes.get_mut(parent).unwrap().children.remove(&child);
         self.nodes.get_mut(child).unwrap().parents.remove(&parent);
+
+        if self.nodes.get(parent).unwrap().children.len() == 0 {
+            self.leaves.insert(parent);
+        }
+        if self.nodes.get(child).unwrap().parents.len() == 0 {
+            self.roots.insert(child);
+        }
     }
 
     fn count_edges_iter(&self, curr_node: NodeId, nodes_visited: &mut BTreeSet<NodeId>) -> u32 {
