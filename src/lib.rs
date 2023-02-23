@@ -74,10 +74,10 @@ impl<T: Ord + Hash + Clone> Dag<T> {
         self.nodes.get_mut(parent).unwrap().children.remove(&child);
         self.nodes.get_mut(child).unwrap().parents.remove(&parent);
 
-        if self.nodes.get(parent).unwrap().children.len() == 0 {
+        if self.nodes.get(parent).unwrap().children.is_empty() {
             self.leaves.insert(parent);
         }
-        if self.nodes.get(child).unwrap().parents.len() == 0 {
+        if self.nodes.get(child).unwrap().parents.is_empty() {
             self.roots.insert(child);
         }
     }
